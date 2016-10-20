@@ -55,3 +55,9 @@
       copy: src=my.cnf.custom dest=/etc/my.cnf backup=yes
     - name: start mysql and enabled
       service: name=mysqld state=started enabled=yes
+      
+      
+ 
+  handlers:
+    - name: restart apache
+      service: name=httpd state=restarted
