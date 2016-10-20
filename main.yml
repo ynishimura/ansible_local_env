@@ -4,3 +4,54 @@
   tasks:
     - name: yum update
       yum: name=* state=latest
+    - name: disable iptables
+      service: name=iptables state=stopped enabled=no
+    - name: install libselinux-python
+      yum: name=libselinux-python state=latest
+    - name: remove localtime
+      file: path=/etc/localtime state=absent
+    - name: change timezone
+      file: src=/usr/share/zoneinfo/Asia/Tokyo dest=/etc/localtime state=link force=yes mode=0644
+    - name: change locale
+      lineinfile: >-
+        dest=/etc/sysconfig/i18n
+        state=present
+        regexp=^LANG=
+        line='LANG="ja_JP.UTF-8"'
+    - name: install remi repository
+      command: rpm -Uvh --force http://rpms.famillecollet.com/enterprise/remi-release-6.rpm
+    - name: install man
+      yum: name=man state=latest
+    - name: install apache
+      yum: name=httpd state=latest
+    - name: start apache and enabled
+      service: name=httpd state=started enabled=yes
+    - name: change owner
+      file: dest=/var/www/html owner=vagrant recurse=yes
+    - name: install gd-last
+      yum: name=gd-last enablerepo=remi state=latest
+    - name: install php
+      yum: name={{item}} enablerepo=remi-php56 state=present
+      with_items:
+        - php
+        - php-common
+        - php-pdo
+        - php-cli
+        - php-devel
+        - php-mysqlnd
+        - php-mbstring
+        - php-gd
+        - php-intl
+        - php-xml
+      notify:
+        - restart apache
+    - name: copy php.ini.custom
+      copy: src=php.ini.custom dest=/etc/php.ini backup=yes
+      notify:
+        - restart apache
+    - name: install mysql
+      yum: name=mysql-server enablerepo=remi,epel state=present
+    - name: copy my.cnf.custom
+      copy: src=my.cnf.custom dest=/etc/my.cnf backup=yes
+    - name: start mysql and enabled
+      service: name=mysqld state=started enabled=yes
