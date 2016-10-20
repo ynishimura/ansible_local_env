@@ -11,6 +11,6 @@ vagrant ssh
 sudo yum -y install git
 git clone https://github.com/ynishimura/ansible_local_env.git
 cd ansible_local_env
-./run.sh
+sh ./run.sh
 exec $SHELL -l
 ```
