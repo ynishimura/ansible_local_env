@@ -14,3 +14,13 @@ cd ansible_local_env
 sh ./run.sh
 exec $SHELL -l
 ```
+
+
+---
+
+### curlによるインストール方法
+
+`curl -L https://raw.githubusercontent.com/ynishimura/ansible_local_env/master/run.sh | sh`
+
+
+
